@@ -1,0 +1,139 @@
+openapi: "3.0.0"
+servers:
+  - url: //petstore.swagger.io/v2
+    description: Default server
+  - url: //petstore.swagger.io/sandbox
+    description: Sandbox server
+info:
+  description: |
+    # Introduction
+    Add introduction here....
+
+    # Authentication
+
+    Add authentication details here...
+
+  version: 1.0.0
+  title: Intelycate API Docs
+  contact:
+    name: API Support
+    email: apisupport@intelycare.com
+  x-logo:
+    url: 'https://www.intelycare.com/wp-content/uploads/2023/08/ic-logo-2-1.svg'
+    altText: IntelyCare logo
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: Shift
+    description: Everything about Shifts
+x-tagGroups:
+  - name: APIs
+    tags:
+      - Shift
+paths:
+  /shift:
+    post:
+      tags: 
+        -  Shift
+      operationId: shift_create_api_v1
+      summary: Create Shift API
+      requestBody: 
+        content: 
+          application/json:
+            schema:
+              type: object
+              required: 
+                - client_id
+                - external_shift_id
+                - shift_start_time
+                - shift_end_time
+                - shift_unit
+                - helthcare_professional_type
+                - shift_source
+              properties:
+                client_id:
+                  description: Unique identifier of the client
+                  type: integer
+                external_shift_id:
+                  description: Unique identifier for the shift
+                  type: integer
+                shift_start_time:
+                  description: Shift start date/time in ISO 8601 format and in UTC timezone. E.g "2024-01-24T05:04:34Z"
+                  type: string
+                shift_end_time:
+                  description: Shift end date/time in ISO 8601 format and in UTC timezone. E.g "2024-01-24T11:04:34Z"
+                  type: string
+                shift_unit:
+                  description: Facility unit where the care should be delivered by the healthcare professional
+                  type: string
+                helthcare_professional_type:
+                  description: Healthcare professional qualification needed for the given shift
+                  type: string
+                shift_source:
+                  description: Shift origination point 
+                  type: string
+                shift_boost_percentage:
+                  description: Percentage amount for boosting the shift
+                  type: integer
+                  default: 0
+            example: 
+                {
+                  "client_id": 1234,
+                  "external_shift_id": 2546810,
+                  "shift_start_time": "2024-01-16T23:00:00",
+                  "shift_end_time": "2024-01-17T07:00:00",
+                  "shift_unit": "1st Floor",
+                  "helthcare_professional_type": "LPN",
+                  "shift_source": "qwerty",
+                  "shift_boost_percentage": 10
+                }
+            x-codeSamples:
+              - lang: 'cURL'
+                label: 'CLI'
+                source: |
+                  curl --request POST \
+                  --url 'https://data.apiexample.com/api/example/batch_query/json?format=json' \
+                  --header 'content-type: application/octet-stream: ' \
+                  --data '{}'
+      responses:
+        '200':
+          description: |-
+            200 OK Response
+          content:
+            application/json: 
+              example:
+                [ 
+                  {
+                    "helthcare_professional_type" : "LPN",
+                    "shift_status": "open",
+                    "shift_created": true,
+                    "shift_start_time": "2024-01-16T23:00:00",
+                    "shift_end_time": "2024-01-17T07:00:00",
+                    "shift_date" : "2024-01-16",
+                    "clientId" : 1234,
+                  } 
+                ]
+                    
+        '400':
+          description: |-
+            400 Bad Request
+          content:
+            application/json: 
+              examples:
+                foo:
+                  value:
+                    {
+                      "message":"Client Id is not valid!"
+                    }
+        '401':
+          description: |-
+            401 Unauthorized
+          content:
+            application/json: 
+              examples:
+                foo:
+                  value:
+                    {
+                      "message":"Not Authorized!"
+                    }
