@@ -15,32 +15,27 @@ info:
 
     To get started with the IntelyCare API, refer to the detailed documentation below. We provide comprehensive information on authentication, endpoints, request and response formats, and error handling.
 
-    # Key Features
+    # Authentication
 
-    ## Shift Request Creation
+    IntelyCare offers the following authentication schemes:
 
-    Integrate with the IntelyCare platform to create shift requests effortlessly. Our API allows you to programmatically submit and manage shift requests, providing you with the flexibility to adapt to your workforce scheduling needs.
+    | Type                      | Usage       | Description                                                    | Example                                                                   |
+    | ------------------------- | ----------- | -------------------------------------------------------------- | ------------------------------------------------------------------------- |
+    | apiKey                    | REST APIs   | Required as `X-API-KEY` header for all RESTful calls           | `d1015a83-9f5f-4a4d-b5fd-4e756ed1d282`                                    |
+    | HMAC Signature (SHA256)   | Webhooks    | Provided as `X-Signature-IC` header on all webhooks            | `bcc151a55acf3d93c097e768f2b96f82d91b56d6fe2a102818b70f0fdfd0ccd1`        |
 
-    ## Shift Status and IntelyPro Information
-
-    Retrieve real-time updates on the status of submitted shifts. The API response includes valuable information about the assigned IntelyPro, giving you insights into the workforce handling each shift.
-
-    ## Timecard Information Exchange
-
-    Simplify billing reconciliation by exchanging timecard information seamlessly. Our API supports the exchange of accurate timekeeping data, ensuring a smooth and efficient process for both you and the IntelyCare platform.
-
-    # Support and Assistance
+    > :memo: **Note:** API Keys are tied to individual clients and cannot be used outside their provided scope
    
     # Support and Assistance
 
-    If you have any questions, encounter issues, or require assistance during the integration process, our dedicated support team is here to help. Reach out to support@intelycare.com for prompt and reliable assistance.
+    If you have any questions, encounter issues, or require assistance during the integration process, our dedicated support team is here to help. Reach out to apisupport@intelycare.com for prompt and reliable assistance.
 
     Thank you for choosing IntelyCare. Let's build a more efficient and connected healthcare workforce together!
   version: 1.0.0
   title: IntelyCare API Documentation
   contact:
     name: API Support
-    email: support@intelycare.com
+    email: apisupport@intelycare.com
   x-logo:
     url: 'https://www.intelycare.com/wp-content/uploads/2023/08/ic-logo-2-1.svg'
     altText: IntelyCare Logo
@@ -49,23 +44,26 @@ info:
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
   - name: Shift
-    description: Everything about Shifts
-  - name: Assignment
-    description: Everything about Shift Assignment
-  - name: Punches
-    description: Everything about Timeclock Punches and Events
+    description: Integrate with the IntelyCare platform to create shift requests effortlessly. Our API allows you to programmatically submit and manage shift requests, providing you with the flexibility to adapt to your workforce scheduling needs.
+  # - name: Assignment
+  #   description: aaaa
+  # - name: Punches
+  #   description: Everything about Timeclock Punches and Events
   - name: Timecard
-    description: Everything about Time & Attendance
-  - name: Facility
-    description: Everything about Facilities
+    description: Simplify billing reconciliation by exchanging timecard information seamlessly. Our API supports the exchange of accurate timekeeping data, ensuring a smooth and efficient process for both you and the IntelyCare platform.
+  # - name: Facility
+  #   description: Everything about Facilities
+  - name: Webhook Events
+    description: Real-time updates on the status of submitted shifts. The API response includes valuable information about the assigned IntelyPro, giving you insights into the workforce handling each shift.
 x-tagGroups:
   - name: APIs
     tags:
       - Shift
-      - Assignment
-      - Punches
+      # - Assignment
+      # - Punches
       - Timecard
-      - Facility
+      # - Facility
+      - Webhook Events
 components:
   securitySchemes: # Security
     ApiKeyAuth:
@@ -75,7 +73,7 @@ components:
     HMACSignature:
       type: apiKey
       in: header
-      name: X-Signature-SHA256
+      name: X-Signature-IC
   responses: # Responses
     UnauthorizedError:
       description: Unauthorized
@@ -133,8 +131,6 @@ paths:
                 - shift_unit
                 - healthcare_professional_type
                 - shift_source
-              optional: 
-                - shift_boost_percentage
               properties:
                 client_id:
                   description: Unique identifier of the client
@@ -234,13 +230,6 @@ paths:
               required: 
                 - client_id
                 - external_shift_id
-              optional: 
-                - shift_start_time
-                - shift_end_time
-                - shift_unit
-                - healthcare_professional_type
-                - shift_source
-                - shift_boost_percentage
               properties:
                 client_id:
                   description: Unique identifier of the client
@@ -271,6 +260,7 @@ paths:
                   default: 0
             example: 
                 {
+                  "client_id": 12312312,
                   "external_shift_id": 2546810,
                   "shift_start_time": "2024-01-16T23:00:00",
                   "shift_end_time": "2024-01-17T07:00:00",
@@ -339,8 +329,6 @@ paths:
               required: 
                 - client_id
                 - external_shift_id
-              optional: 
-                - id
               properties:
                 client_id:
                   description: Unique identifier of the client
@@ -401,174 +389,178 @@ paths:
                     }
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-  /punches:
-    post:
-      tags:
-        - Punches
-      operationId: punch_create_api_v1
-      summary: Create
-      security: 
-        - ApiKeyAuth: []
-      requestBody:
-        content: 
-          application/json:
-            schema:
-              type: object
-              required: 
-                - client_id
-                - external_shift_id
-              properties:
-                client_id:
-                  description: Unique identifier of the client
-                  type: integer
-                external_shift_id:
-                  description: Unique identifier for the shift
-                  type: integer
-                attributes:
-                  description: Array of timecard attributes
-                shift_start_time:
-                  description: Shift start date/time in ISO 8601 format and in UTC timezone
-                  type: string
-                  example: "2024-01-24T05:04:34Z"
-            example: 
-                {
-                  "client_id" : 1234,
-                  "external_shift_id": 2546810,
-                  "attributes": [
-                    {
-                      "attribute": "CHECK_IN",
-                      "value": "2024-01-17T07:00:00"
-                    },
-                    {
-                      "attribute": "CHECK_OUT",
-                      "value": "2024-01-17T15:00:00"
-                    },
-                    {
-                      "attribute": "BREAK_START",
-                      "value": "2024-01-17T11:30:00"
-                    },
-                    {
-                      "attribute": "BREAK_END",
-                      "value": "2024-01-17T12:02:00"
-                    },
-                    {
-                      "attribute": "SKIP_BREAK",
-                      "value": "false"
-                    },
-                    {
-                      "attribute": "CHECK_IN_SUPERVISOR",
-                      "value": "Tony Stark"
-                    },
-                    {
-                      "attribute": "CHECK_IN_SIGNATURE",
-                      "value": "P6XvJ9o1X3HaY0+RGG7Lmg=="
-                    },
-                    {
-                      "attribute": "CHECK_OUT_SUPERVISOR",
-                      "value": "Tony Stark"
-                    },
-                    {
-                      "attribute": "CHECK_OUT_SIGNATURE",
-                      "value": "XfPy2KmGiZTQySSS3OHCWw=="
-                    }
-                  ]
-                }
-      responses:
-        '200':
-          description: |-
-            200 OK
-          content:
-            application/json: 
-              example:
-                {
-                  "id": 123,
-                  "client_id" : 1234,
-                  "external_shift_id": 2546810,
-                  "attributes": [
-                    {
-                      "attribute": "CHECK_IN",
-                      "value": "2024-01-17T07:00:00"
-                    },
-                    {
-                      "attribute": "CHECK_OUT",
-                      "value": "2024-01-17T15:00:00"
-                    },
-                    {
-                      "attribute": "BREAK_START",
-                      "value": "2024-01-17T11:30:00"
-                    },
-                    {
-                      "attribute": "BREAK_END",
-                      "value": "2024-01-17T12:02:00"
-                    },
-                    {
-                      "attribute": "SKIP_BREAK",
-                      "value": "false"
-                    },
-                    {
-                      "attribute": "CHECK_IN_SUPERVISOR",
-                      "value": "Tony Stark"
-                    },
-                    {
-                      "attribute": "CHECK_IN_SIGNATURE",
-                      "value": "P6XvJ9o1X3HaY0+RGG7Lmg=="
-                    },
-                    {
-                      "attribute": "CHECK_OUT_SUPERVISOR",
-                      "value": "Tony Stark"
-                    },
-                    {
-                      "attribute": "CHECK_OUT_SIGNATURE",
-                      "value": "XfPy2KmGiZTQySSS3OHCWw=="
-                    }
-                  ],
-                  "errors": null,
-                  "created_at": "2024-01-17T15:01:00"
-                }  
-    patch:
-      tags:
-        - Punches
-      operationId: update_punch_api_v1
-      summary: Update Punch
-      security: 
-        - ApiKeyAuth: []
-      requestBody:
-        content: 
-          application/json:
-            schema:
-              type: object
-              required: 
-                - timecard_id
-                - attribute
-              properties:
-                timecard_id:
-                  description: Unique identifier of the timecard
-                  type: integer
-                attribute:
-                  $ref: "#/components/schemas/TimecardAttribute"
-                value:
-                  description: Value associated with provided attribute
-                  type: string
-            example: 
-                {
-                  "timecard_id": 1234,
-                  "attribute": "CHECK_OUT",
-                  "value": "2024-01-17T07:00:00"
-                }
-      responses:
-        '200':
-          description: |-
-            200 OK
-          content:
-            application/json: 
-              example:
-                {
-                  "timecard_id": 1234,
-                  "attribute": "CHECK_OUT",
-                  "value": "2024-01-17T07:00:00",
-                  "errors": null,
-                  "updated_at": "2024-01-17T15:01:00"
-                }  
+  # /punches:
+  #   post:
+  #     tags:
+  #       - Punches
+  #     operationId: punch_create_api_v1
+  #     summary: Create
+  #     security: 
+  #       - ApiKeyAuth: []
+  #     requestBody:
+  #       content: 
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             required: 
+  #               - client_id
+  #               - external_shift_id
+  #             properties:
+  #               client_id:
+  #                 description: Unique identifier of the client
+  #                 type: integer
+  #               external_shift_id:
+  #                 description: Unique identifier for the shift
+  #                 type: integer
+  #               attributes:
+  #                 description: Array of timecard attributes
+  #               shift_start_time:
+  #                 description: Shift start date/time in ISO 8601 format and in UTC timezone
+  #                 type: string
+  #                 example: "2024-01-24T05:04:34Z"
+  #           example: 
+  #               {
+  #                 "client_id" : 1234,
+  #                 "external_shift_id": 2546810,
+  #                 "attributes": [
+  #                   {
+  #                     "attribute": "CHECK_IN",
+  #                     "value": "2024-01-17T07:00:00"
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_OUT",
+  #                     "value": "2024-01-17T15:00:00"
+  #                   },
+  #                   {
+  #                     "attribute": "BREAK_START",
+  #                     "value": "2024-01-17T11:30:00"
+  #                   },
+  #                   {
+  #                     "attribute": "BREAK_END",
+  #                     "value": "2024-01-17T12:02:00"
+  #                   },
+  #                   {
+  #                     "attribute": "SKIP_BREAK",
+  #                     "value": "false"
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_IN_SUPERVISOR",
+  #                     "value": "Tony Stark"
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_IN_SIGNATURE",
+  #                     "value": "P6XvJ9o1X3HaY0+RGG7Lmg=="
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_OUT_SUPERVISOR",
+  #                     "value": "Tony Stark"
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_OUT_SIGNATURE",
+  #                     "value": "XfPy2KmGiZTQySSS3OHCWw=="
+  #                   }
+  #                 ]
+  #               }
+  #     responses:
+  #       '200':
+  #         description: |-
+  #           200 OK
+  #         content:
+  #           application/json: 
+  #             example:
+  #               {
+  #                 "id": 123,
+  #                 "client_id" : 1234,
+  #                 "external_shift_id": 2546810,
+  #                 "attributes": [
+  #                   {
+  #                     "attribute": "CHECK_IN",
+  #                     "value": "2024-01-17T07:00:00"
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_OUT",
+  #                     "value": "2024-01-17T15:00:00"
+  #                   },
+  #                   {
+  #                     "attribute": "BREAK_START",
+  #                     "value": "2024-01-17T11:30:00"
+  #                   },
+  #                   {
+  #                     "attribute": "BREAK_END",
+  #                     "value": "2024-01-17T12:02:00"
+  #                   },
+  #                   {
+  #                     "attribute": "SKIP_BREAK",
+  #                     "value": "false"
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_IN_SUPERVISOR",
+  #                     "value": "Tony Stark"
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_IN_SIGNATURE",
+  #                     "value": "P6XvJ9o1X3HaY0+RGG7Lmg=="
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_OUT_SUPERVISOR",
+  #                     "value": "Tony Stark"
+  #                   },
+  #                   {
+  #                     "attribute": "CHECK_OUT_SIGNATURE",
+  #                     "value": "XfPy2KmGiZTQySSS3OHCWw=="
+  #                   }
+  #                 ],
+  #                 "errors": null,
+  #                 "created_at": "2024-01-17T15:01:00"
+  #               }
+  #       '401':
+  #         $ref: "#/components/responses/UnauthorizedError"  
+  #   patch:
+  #     tags:
+  #       - Punches
+  #     operationId: update_punch_api_v1
+  #     summary: Update Punch
+  #     security: 
+  #       - ApiKeyAuth: []
+  #     requestBody:
+  #       content: 
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             required: 
+  #               - timecard_id
+  #               - attribute
+  #             properties:
+  #               timecard_id:
+  #                 description: Unique identifier of the timecard
+  #                 type: integer
+  #               attribute:
+  #                 $ref: "#/components/schemas/TimecardAttribute"
+  #               value:
+  #                 description: Value associated with provided attribute
+  #                 type: string
+  #           example: 
+  #               {
+  #                 "timecard_id": 1234,
+  #                 "attribute": "CHECK_OUT",
+  #                 "value": "2024-01-17T07:00:00"
+  #               }
+  #     responses:
+  #       '200':
+  #         description: |-
+  #           200 OK
+  #         content:
+  #           application/json: 
+  #             example:
+  #               {
+  #                 "timecard_id": 1234,
+  #                 "attribute": "CHECK_OUT",
+  #                 "value": "2024-01-17T07:00:00",
+  #                 "errors": null,
+  #                 "updated_at": "2024-01-17T15:01:00"
+  #               }  
+  #       '401':
+  #         $ref: "#/components/responses/UnauthorizedError"
   /timecard:
     post:
       tags:
@@ -631,6 +623,8 @@ paths:
                   "errors": null,
                   "created_at": "2024-01-17T15:01:00"
                 }
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
     put:
       tags:
         - Timecard
@@ -692,18 +686,20 @@ paths:
                   "errors": null,
                   "updated_at": "2024-01-17T15:01:00"
                 }
-webhooks:
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+x-webhooks:
   ShiftAccept:
     post:
       tags: 
-      - Shift
+      - Webhook Events
       operationId: shift_accept_webhook_v1
       summary: Shift Accept
       description: Webhook event for shift accept
       security: 
         - HMACSignature: []
       parameters:
-        - name: X-Signature-SHA256
+        - name: X-Signature-IC
           in: header
           description: The hash signature of the payload. IntelyCare webhooks uses a HMAC hex digest (SHA256) to compute the signature of the body payload with the webhook secret.
           example: a0b1c1d2e3f5a8b13c21d34e55f89a144b233c377d610e987f1597a2584b4181
@@ -798,47 +794,17 @@ webhooks:
                     },
                     "status_timestamp": "2024-01-17T15:01:00"
                   }
-      responses:
-        '200':
-          description: |-
-            200 OK
-          content:
-            application/json: 
-              example:
-                {
-                  "message": "Receieved"
-                }  
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '400':
-          description: |-
-            400 Bad Request
-          content:
-            application/json: 
-              example:
-                {
-                  "message": "Failure"
-                }  
-        '500':
-          description: |-
-            500 Internal Server Error
-          content:
-            application/json: 
-              example:
-                {
-                  "message": "Internal Server Error"
-                }  
   ShiftRelease:
     post:
       tags: 
-      - Shift
+      - Webhook Events
       operationId: shift_release_webhook_v1
       summary: Shift Release
       description: Webhook event for shift release
       security: 
         - HMACSignature: []
       parameters:
-        - name: X-Signature-SHA256
+        - name: X-Signature-IC
           in: header
           description: The hash signature of the payload. IntelyCare webhooks uses a HMAC hex digest (SHA256) to compute the signature of the body payload with the webhook secret.
           example: a0b1c1d2e3f5a8b13c21d34e55f89a144b233c377d610e987f1597a2584b4181
@@ -882,33 +848,3 @@ webhooks:
                     "shift_status": "Released",
                     "status_timestamp": "2024-01-17T15:01:00"
                   }
-      responses:
-        '200':
-          description: |-
-            200 OK
-          content:
-            application/json: 
-              example:
-                {
-                  "message": "Receieved"
-                }  
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '400':
-          description: |-
-            400 Bad Request
-          content:
-            application/json: 
-              example:
-                {
-                  "message": "Failure"
-                }  
-        '500':
-          description: |-
-            500 Internal Server Error
-          content:
-            application/json: 
-              example:
-                {
-                  "message": "Internal Server Error"
-                }  
