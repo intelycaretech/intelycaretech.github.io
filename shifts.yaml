@@ -7,31 +7,33 @@ servers:
 info:
   description: |
     # Introduction
-    Welcome to the IntelyCare API documentation, your gateway to seamless integration with the IntelyCare Staffing platform. Our REST API empowers clients to efficiently create shift requests, enabling a streamlined process for managing workforce scheduling. By leveraging this API, you can enhance your systems with real-time information about shift status, including when a shift has been filled and details about the assigned IntelyPro.\n
+    Welcome to the IntelyCare API documentation, your gateway to seamless integration with the IntelyCare Staffing platform. Our REST API empowers clients to efficiently create shift requests, enabling a streamlined process for managing workforce scheduling. By leveraging this API, you can enhance your systems with real-time information about shift status, including when a shift has been filled and details about the assigned IntelyPro.
 
     # Overview
 
-    The IntelyCare API facilitates communication between your application and the IntelyCare platform, enabling a seamless exchange of data. This documentation serves as a comprehensive guide to help you integrate your systems with our powerful RESTful API. All requests and responses are JSON-encoded, and use standard HTTP response codes and authentication schemes. Bulk operations are not supported. You can work with only one object per request.\n
+    The IntelyCare API facilitates communication between your application and the IntelyCare platform, enabling a seamless exchange of data. This documentation serves as a comprehensive guide to help you integrate your systems with our powerful RESTful API. All requests and responses are JSON-encoded, and use standard HTTP response codes and authentication schemes. Bulk operations are not supported. You can work with only one object per request.
 
-    To get started with the IntelyCare API, refer to the detailed documentation below. We provide comprehensive information on authentication, endpoints, request and response formats, and error handling.\n
+    To get started with the IntelyCare API, refer to the detailed documentation below. We provide comprehensive information on authentication, endpoints, request and response formats, and error handling.
 
     # Key Features
 
     ## Shift Request Creation
 
-    Integrate with the IntelyCare platform to create shift requests effortlessly. Our API allows you to programmatically submit and manage shift requests, providing you with the flexibility to adapt to your workforce scheduling needs.\n
+    Integrate with the IntelyCare platform to create shift requests effortlessly. Our API allows you to programmatically submit and manage shift requests, providing you with the flexibility to adapt to your workforce scheduling needs.
 
     ## Shift Status and IntelyPro Information
 
-    Retrieve real-time updates on the status of submitted shifts. The API response includes valuable information about the assigned IntelyPro, giving you insights into the workforce handling each shift.\n
+    Retrieve real-time updates on the status of submitted shifts. The API response includes valuable information about the assigned IntelyPro, giving you insights into the workforce handling each shift.
 
     ## Timecard Information Exchange
 
-    Simplify billing reconciliation by exchanging timecard information seamlessly. Our API supports the exchange of accurate timekeeping data, ensuring a smooth and efficient process for both you and the IntelyCare platform.\n
+    Simplify billing reconciliation by exchanging timecard information seamlessly. Our API supports the exchange of accurate timekeeping data, ensuring a smooth and efficient process for both you and the IntelyCare platform.
 
     # Support and Assistance
+   
+    # Support and Assistance
 
-    If you have any questions, encounter issues, or require assistance during the integration process, our dedicated support team is here to help. Reach out to support@intelycare.com for prompt and reliable assistance.\n
+    If you have any questions, encounter issues, or require assistance during the integration process, our dedicated support team is here to help. Reach out to support@intelycare.com for prompt and reliable assistance.
 
     Thank you for choosing IntelyCare. Let's build a more efficient and connected healthcare workforce together!
   version: 1.0.0
@@ -694,7 +696,7 @@ webhooks:
   ShiftAccept:
     post:
       tags: 
-      - Shift Accept
+      - Shift
       operationId: shift_accept_webhook_v1
       summary: Shift Accept
       description: Webhook event for shift accept
@@ -829,7 +831,7 @@ webhooks:
   ShiftRelease:
     post:
       tags: 
-      - Shift Release
+      - Shift
       operationId: shift_release_webhook_v1
       summary: Shift Release
       description: Webhook event for shift release
@@ -909,4 +911,4 @@ webhooks:
               example:
                 {
                   "message": "Internal Server Error"
-                }
+                }  
