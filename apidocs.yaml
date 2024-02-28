@@ -110,7 +110,7 @@ security:
   - ApiKeyAuth: []     # use the same name as under securitySchemes
   - HMACSignature: []
 paths:
-  /shift:
+  /shifts:
     post:
       tags: 
         -  Shift
@@ -118,57 +118,72 @@ paths:
       summary: Create
       security: 
         - ApiKeyAuth: []
+      parameters:
+        - name: X-API-KEY
+          in: header
+          description: API key issued to a specific client. This can only be used to access data within the client scope.
+          example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
+          required: true
+          schema:
+            type: string
+        - name: X-CLIENT-ID
+          in: header
+          description: Intelycare's Unique identifier of the client.
+          example: "1234"
+          required: true
+          schema:
+            type: string
       requestBody: 
         content: 
           application/json:
             schema:
               type: object
               required: 
-                - client_id
-                - external_shift_id
-                - shift_start_time
-                - shift_end_time
-                - shift_unit
-                - healthcare_professional_type
-                - shift_source
+                - externalShiftId
+                - shiftStartTime
+                - shiftEndTime
+                - shiftUnit
+                - healthcareProfessionalType
+                - shiftSource
+                - timezone
               properties:
-                client_id:
-                  description: Unique identifier of the client
-                  type: integer
-                external_shift_id:
+                externalShiftId:
                   description: Unique identifier for the shift
                   type: integer
-                shift_start_time:
+                shiftStartTime:
                   description: Shift start date/time in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-24T05:04:34Z"
-                shift_end_time:
+                shiftEndTime:
                   description: Shift end date/time in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-24T11:04:34Z"
-                shift_unit:
+                shiftUnit:
                   description: Facility unit where the care should be delivered by the healthcare professional
                   type: string
-                healthcare_professional_type:
+                healthcareProfessionalType:
                   description: Healthcare professional qualification needed for the given shift
                   type: string
-                shift_source:
+                shiftSource:
                   description: Shift origination point 
                   type: string
-                shift_boost_percentage:
+                timezone:
+                  description: Timezone for the shifts
+                  type: string
+                shiftBoostPercentage:
                   description: Percentage amount for boosting the shift
                   type: integer
                   default: 0
             example: 
                 {
-                  "client_id": 1234,
-                  "external_shift_id": 2546810,
-                  "shift_start_time": "2024-01-16T23:00:00",
-                  "shift_end_time": "2024-01-17T07:00:00",
-                  "shift_unit": "1st Floor",
-                  "healthcare_professional_type": "LPN",
-                  "shift_source": "qwerty",
-                  "shift_boost_percentage": 10
+                  "externalShiftId": 2546810,
+                  "shiftStartTime": "2024-01-16T23:00:00",
+                  "shiftEndTime": "2024-01-17T07:00:00",
+                  "shiftUnit": "1st Floor",
+                  "healthcareProfessionalType": "LPN",
+                  "shiftSource": "qwerty",
+                  "shiftBoostPercentage": 10,
+                  "timezone": "ET"
                 }
             x-codeSamples:
               - lang: 'cURL'
@@ -187,18 +202,19 @@ paths:
               example:
                 {
                   "id": 123,
-                  "client_id" : 1234,
+                  "clientId" : 1234,
                   "attributes": {
-                    "external_shift_id": 2546810,
-                    "shift_start_time": "2024-01-16T23:00:00",
-                    "shift_end_time": "2024-01-17T07:00:00",
-                    "shift_unit": "1st Floor",
-                    "healthcare_professional_type": "LPN",
-                    "shift_source": "qwerty",
-                    "shift_boost_percentage": 10
+                    "externalShiftId": 2546810,
+                    "shiftStartTime": "2024-01-16T23:00:00",
+                    "shiftEndTime": "2024-01-17T07:00:00",
+                    "shiftUnit": "1st Floor",
+                    "healthcareProfessionalType": "LPN",
+                    "shiftSource": "qwerty",
+                    "shiftBoostPercentage": 10,
+                    "timezone": "ET"
                   },
-                  "created_at": "2024-01-15T13:30:00"
-                }  
+                  "createdAt": "2024-01-15T13:30:00"
+                }
         '400':
           description: |-
             400 Bad Request
@@ -215,6 +231,7 @@ paths:
                     }
         '401':
           $ref: "#/components/responses/UnauthorizedError"
+  /shifts/{shiftId}:
     put:
       tags:
         - Shift
@@ -222,52 +239,67 @@ paths:
       summary: Update
       security: 
         - ApiKeyAuth: []
+      parameters:
+        - name: X-API-KEY
+          in: header
+          description: API key issued to a specific client. This can only be used to access data within the client scope.
+          example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
+          required: true
+          schema:
+            type: string
+        - name: X-CLIENT-ID
+          in: header
+          description: Intelycare's Unique identifier of the client.
+          example: "1234"
+          required: true
+          schema:
+            type: string
+        - name: shiftId
+          in: path
+          description: Intelycare's Unique identifier of the shift.
+          example: "1234"
+          required: true
+          schema:
+            type: string
       requestBody:
         content: 
           application/json:
             schema:
               type: object
-              required: 
-                - client_id
-                - external_shift_id
               properties:
-                client_id:
-                  description: Unique identifier of the client
-                  type: integer
-                external_shift_id:
-                  description: Unique identifier for the shift
-                  type: integer
-                shift_start_time:
+                shiftStartTime:
                   description: Shift start date/time in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-24T05:04:34Z"
-                shift_end_time:
+                shiftEndTime:
                   description: Shift end date/time in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-24T11:04:34Z"
-                shift_unit:
+                shiftUnit:
                   description: Facility unit where the care should be delivered by the healthcare professional
                   type: string
-                healthcare_professional_type:
+                healthcareProfessionalType:
                   description: Healthcare professional qualification needed for the given shift
                   type: string
-                shift_source:
+                shiftSource:
                   description: Shift origination point 
                   type: string
-                shift_boost_percentage:
+                shiftBoostPercentage:
                   description: Percentage amount for boosting the shift
                   type: integer
                   default: 0
+                timezone:
+                  description: Timezone for the shifts
+                  type: string
             example: 
                 {
-                  "client_id": 12312312,
-                  "external_shift_id": 2546810,
-                  "shift_start_time": "2024-01-16T23:00:00",
-                  "shift_end_time": "2024-01-17T07:00:00",
-                  "shift_unit": "1st Floor",
-                  "helthcare_professional_type": "LPN",
-                  "shift_source": "qwerty",
-                  "shift_boost_percentage": 10
+                  "shiftStartTime": "2024-01-16T23:00:00",
+                  "shiftEndTime": "2024-01-17T07:00:00",
+                  "shiftUnit": "1st Floor",
+                  "healthcareProfessionalType": "LPN",
+                  "shiftSource": "qwerty",
+                  "shiftBoostPercentage": 10,
+                  "timezone": "ET"
                 }
             x-codeSamples:
               - lang: 'cURL'
@@ -286,18 +318,19 @@ paths:
               example:
                 {
                   "id": 123,
-                  "client_id" : 1234,
+                  "clientId" : 1234,
                   "attributes": {
-                    "external_shift_id": 2546810,
-                    "shift_start_time": "2024-01-16T23:00:00",
-                    "shift_end_time": "2024-01-17T07:00:00",
-                    "shift_unit": "1st Floor",
-                    "healthcare_professional_type": "LPN",
-                    "shift_source": "qwerty",
-                    "shift_boost_percentage": 10
+                    "externalShiftId": 2546810,
+                    "shiftStartTime": "2024-01-16T23:00:00",
+                    "shiftEndTime": "2024-01-17T07:00:00",
+                    "shiftUnit": "1st Floor",
+                    "healthcareProfessionalType": "LPN",
+                    "shiftSource": "qwerty",
+                    "shiftBoostPercentage": 10,
+                    "timezone": "ET"
                   },
-                  "updated_at": "2024-01-15T13:30:00"
-                }  
+                  "updatedAt": "2024-01-15T13:30:00"
+                }
         '400':
           description: |-
             400 Bad Request
@@ -321,37 +354,28 @@ paths:
       summary: Delete
       security: 
         - ApiKeyAuth: []
-      requestBody:
-        content: 
-          application/json:
-            schema:
-              type: object
-              required: 
-                - client_id
-                - external_shift_id
-              properties:
-                client_id:
-                  description: Unique identifier of the client
-                  type: integer
-                external_shift_id:
-                  description: Unique identifier for the shift
-                  type: integer
-                id:
-                  description: Unique identifier generated on shift creation, overriding other request parameters
-            example: 
-                {
-                  "id": 123,
-                  "client_id" : 1234,
-                  "external_shift_id": 2546810
-                }
-            x-codeSamples:
-              - lang: 'cURL'
-                label: 'CLI'
-                source: |
-                  curl --request POST \
-                  --url 'https://data.apiexample.com/api/example/batch_query/json?format=json' \
-                  --header 'content-type: application/octet-stream: ' \
-                  --data '{}'
+      parameters:
+        - name: X-API-KEY
+          in: header
+          description: API key issued to a specific client. This can only be used to access data within the client scope.
+          example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
+          required: true
+          schema:
+            type: string
+        - name: X-CLIENT-ID
+          in: header
+          description: Intelycare's Unique identifier of the client.
+          example: "1234"
+          required: true
+          schema:
+            type: string
+        - name: shiftId
+          in: path
+          description: Intelycare's Unique identifier of the shift.
+          example: "1234"
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: |-
@@ -361,18 +385,18 @@ paths:
               example:
                 {
                   "id": 123,
-                  "client_id" : 1234,
+                  "clientId" : 1234,
                   "attributes": {
-                    "external_shift_id": 2546810,
-                    "shift_start_time": "2024-01-16T23:00:00",
-                    "shift_end_time": "2024-01-17T07:00:00",
-                    "shift_unit": "1st Floor",
-                    "healthcare_professional_type": "LPN",
-                    "shift_source": "qwerty",
-                    "shift_boost_percentage": 10
+                    "externalShiftId": 2546810,
+                    "shiftStartTime": "2024-01-16T23:00:00",
+                    "shiftEndTime": "2024-01-17T07:00:00",
+                    "shiftUnit": "1st Floor",
+                    "healthcareProfessionalType": "LPN",
+                    "shiftSource": "qwerty",
+                    "shiftBoostPercentage": 10
                   },
-                  "deleted_at": "2024-01-15T13:30:00"
-                }  
+                  "deletedAt": "2024-01-15T13:30:00"
+                }
         '400':
           description: |-
             400 Bad Request
