@@ -750,20 +750,6 @@ x-webhooks:
           required: true
           schema:
             type: string
-        - name: X-API-KEY
-          in: header
-          description: API key issued to a specific client. This can only be used to access data within the client scope.
-          example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
-          required: true
-          schema:
-            type: string
-        - name: X-CLIENT-ID
-          in: header
-          description: Intelycare's Unique identifier of the client.
-          example: "1234"
-          required: true
-          schema:
-            type: string
       requestBody:
         description: Webhook event for shift accept
         content:
@@ -771,11 +757,15 @@ x-webhooks:
             schema:
               type: object
               required: 
+                - clientId
                 - externalShiftId
                 - shiftStatus
                 - healthcareProfessional
                 - statusTimestamp
               properties:
+                clientId:
+                  description: Unique identifier of the client
+                  type: integer
                 externalShiftId:
                   description: Unique identifier for the shift
                   type: integer
@@ -833,6 +823,7 @@ x-webhooks:
                   example: "2024-01-17T15:01:00"
             example: 
                   {
+                    "clientId": 1234,
                     "externalShiftId": 2546810,
                     "shiftStatus": "Accepted",
                     "healthcareProfessional": {
@@ -864,20 +855,6 @@ x-webhooks:
           required: true
           schema:
             type: string
-        - name: X-API-KEY
-          in: header
-          description: API key issued to a specific client. This can only be used to access data within the client scope.
-          example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
-          required: true
-          schema:
-            type: string
-        - name: X-CLIENT-ID
-          in: header
-          description: Intelycare's Unique identifier of the client.
-          example: "1234"
-          required: true
-          schema:
-            type: string
       requestBody:
         description: Webhook event for shift release
         content:
@@ -885,10 +862,14 @@ x-webhooks:
             schema:
               type: object
               required: 
+                - clientId
                 - externalShiftId
                 - shiftStatus
                 - statusTimestamp
               properties:
+                clientId:
+                  description: Unique identifier of the client
+                  type: integer
                 externalShiftId:
                   description: Unique identifier for the shift
                   type: integer
@@ -906,6 +887,7 @@ x-webhooks:
                   example: "2024-01-17T15:01:00"
             example: 
                   {
+                    "clientId": 1234,
                     "externalShiftId": 2546810,
                     "shiftStatus": "Released",
                     "statusTimestamp": "2024-01-17T15:01:00"
