@@ -427,10 +427,10 @@ paths:
   #           schema:
   #             type: object
   #             required: 
-  #               - client_id
+  #               - clientId
   #               - external_shift_id
   #             properties:
-  #               client_id:
+  #               clientId:
   #                 description: Unique identifier of the client
   #                 type: integer
   #               external_shift_id:
@@ -444,7 +444,7 @@ paths:
   #                 example: "2024-01-24T05:04:34Z"
   #           example: 
   #               {
-  #                 "client_id" : 1234,
+  #                 "clientId" : 1234,
   #                 "external_shift_id": 2546810,
   #                 "attributes": [
   #                   {
@@ -494,7 +494,7 @@ paths:
   #             example:
   #               {
   #                 "id": 123,
-  #                 "client_id" : 1234,
+  #                 "clientId" : 1234,
   #                 "external_shift_id": 2546810,
   #                 "attributes": [
   #                   {
@@ -593,43 +593,53 @@ paths:
       summary: Create
       security: 
         - ApiKeyAuth: []
+      parameters:
+        - name: X-API-KEY
+          in: header
+          description: API key issued to a specific client. This can only be used to access data within the client scope.
+          example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
+          required: true
+          schema:
+            type: string
+        - name: X-CLIENT-ID
+          in: header
+          description: Intelycare's Unique identifier of the client.
+          example: "1234"
+          required: true
+          schema:
+            type: string
       requestBody:
         content: 
           application/json:
             schema:
               type: object
               required: 
-                - client_id
-                - external_shift_id
-                - check_in
-                - check_out
-                - break_duration
+                - externalShiftId
+                - checkIn
+                - checkOut
+                - breakDuration
               properties:
-                client_id:
-                  description: Unique identifier of the client
-                  type: integer
-                external_shift_id:
+                externalShiftId:
                   description: Unique identifier for the shift
                   type: integer
-                check_in:
+                checkIn:
                   description: Shift check-in timestamp in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-17T07:00:00"
-                check_out:
+                checkOut:
                   description: Shift check-out timestamp in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-17T15:00:00"
-                break_duration:
+                breakDuration:
                   description: Duration (in minutes) of shift break
                   type: integer
                   example: 30
             example: 
                 {
-                  "client_id" : 1234,
-                  "external_shift_id": 2546810,
-                  "check_in": "2024-01-17T07:00:00",
-                  "check_out": "2024-01-17T15:00:00",
-                  "break_duration": 30
+                  "externalShiftId": 2546810,
+                  "checkIn": "2024-01-17T07:00:00",
+                  "checkOut": "2024-01-17T15:00:00",
+                  "breakDuration": 30
                 }
       responses:
         '200':
@@ -639,13 +649,13 @@ paths:
             application/json: 
               example: 
                 {
-                  "client_id" : 1234,
-                  "external_shift_id": 2546810,
-                  "check_in": "2024-01-17T07:00:00",
-                  "check_out": "2024-01-17T15:00:00",
-                  "break_duration": 30,
+                  "clientId" : 1234,
+                  "externalShiftId": 2546810,
+                  "checkIn": "2024-01-17T07:00:00",
+                  "checkOut": "2024-01-17T15:00:00",
+                  "breakDuration": 30,
                   "errors": null,
-                  "created_at": "2024-01-17T15:01:00"
+                  "createdAt": "2024-01-17T15:01:00"
                 }
         '401':
           $ref: "#/components/responses/UnauthorizedError"
@@ -656,43 +666,53 @@ paths:
       summary: Update
       security: 
         - ApiKeyAuth: []
+      parameters:
+        - name: X-API-KEY
+          in: header
+          description: API key issued to a specific client. This can only be used to access data within the client scope.
+          example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
+          required: true
+          schema:
+            type: string
+        - name: X-CLIENT-ID
+          in: header
+          description: Intelycare's Unique identifier of the client.
+          example: "1234"
+          required: true
+          schema:
+            type: string
       requestBody:
         content: 
           application/json:
             schema:
               type: object
               required: 
-                - client_id
-                - external_shift_id
-                - check_in
-                - check_out
-                - break_duration
+                - externalShiftId
+                - checkIn
+                - checkOut
+                - breakDuration
               properties:
-                client_id:
-                  description: Unique identifier of the client
-                  type: integer
-                external_shift_id:
+                externalShiftId:
                   description: Unique identifier for the shift
                   type: integer
-                check_in:
+                checkIn:
                   description: Shift check-in timestamp in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-17T07:00:00"
-                check_out:
+                checkOut:
                   description: Shift check-out timestamp in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-17T15:00:00"
-                break_duration:
+                breakDuration:
                   description: Duration (in minutes) of shift break
                   type: integer
                   example: 30
             example: 
                 {
-                  "client_id" : 1234,
-                  "external_shift_id": 2546810,
-                  "check_in": "2024-01-17T07:00:00",
-                  "check_out": "2024-01-17T15:00:00",
-                  "break_duration": 30
+                  "externalShiftId": 2546810,
+                  "checkIn": "2024-01-17T07:00:00",
+                  "checkOut": "2024-01-17T15:00:00",
+                  "breakDuration": 30
                 }
       responses:
         '200':
@@ -702,13 +722,13 @@ paths:
             application/json: 
               example:
                 {
-                  "client_id" : 1234,
-                  "external_shift_id": 2546810,
-                  "check_in": "2024-01-17T07:00:00",
-                  "check_out": "2024-01-17T15:00:00",
-                  "break_duration": 30,
+                  "clientId" : 1234,
+                  "externalShiftId": 2546810,
+                  "checkIn": "2024-01-17T07:00:00",
+                  "checkOut": "2024-01-17T15:00:00",
+                  "breakDuration": 30,
                   "errors": null,
-                  "updated_at": "2024-01-17T15:01:00"
+                  "updatedAt": "2024-01-17T15:01:00"
                 }
         '401':
           $ref: "#/components/responses/UnauthorizedError"
@@ -737,19 +757,19 @@ x-webhooks:
             schema:
               type: object
               required: 
-                - client_id
-                - external_shift_id
-                - shift_status
-                - healthcare_professional
-                - status_timestamp
+                - clientId
+                - externalShiftId
+                - shiftStatus
+                - healthcareProfessional
+                - statusTimestamp
               properties:
-                client_id:
+                clientId:
                   description: Unique identifier of the client
                   type: integer
-                external_shift_id:
+                externalShiftId:
                   description: Unique identifier for the shift
                   type: integer
-                shift_status:
+                shiftStatus:
                   description: Status of the shift
                   type: string
                   enum:
@@ -757,66 +777,66 @@ x-webhooks:
                     - Completed
                     - Released
                     - Deleted
-                healthcare_professional:
+                healthcareProfessional:
                   description: Healthcare Professional object containing all information about the assigned worker
                   type: object
                   required: 
                     - id
-                    - external_id
-                    - last_name
-                    - first_name
-                    - healthcare_professional_type
-                    - phone_number
+                    - externalId
+                    - lastName
+                    - firstName
+                    - healthcareProfessionalType
+                    - phoneNumber
                     - email
                   optional:
-                    - profile_picture
+                    - profilePicture
                   properties:
                     id:
                       description: Unique identifier of the shift
                       type: integer
-                    external_id:
+                    externalId:
                       description: External identifier for the shift
                       type: integer
-                    last_name:
+                    lastName:
                       description: Last name of the assigned worker
                       type: string
-                    first_name:
+                    firstName:
                       description: First name of the assigned worker
                       type: string
-                    healthcare_professional_type:
+                    healthcareProfessionalType:
                       description: Healthcare professional qualification needed for the given shift
                       type: string
-                    phone_number:
+                    phoneNumber:
                       description: Phone number for the assigned worker 
                       type: string
                       example: "(800) 900-1234"
                     email:
                       description: Email for the assigned worker
                       type: string
-                    profile_picture:
+                    profilePicture:
                       description: Base64 encoded string of the assigned workers profile image
                       type: string
                       example: "XfPy2KmGiZTQySSS3OHCWw=="
-                status_timestamp:
+                statusTimestamp:
                   description: Status timestamp in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-17T15:01:00"
             example: 
                   {
-                    "client_id": 1234,
-                    "external_shift_id": 2546810,
-                    "shift_status": "Accepted",
-                    "healthcare_professional": {
+                    "clientId": 1234,
+                    "externalShiftId": 2546810,
+                    "shiftStatus": "Accepted",
+                    "healthcareProfessional": {
                       "id": "456789",
-                      "external_id": "111124",
-                      "last_name": "Nightengale",
-                      "first_name": "Florence",
-                      "healthcare_professional_type": "LPN",
-                      "phone_number": "(800) 900-1234",
+                      "externalId": "111124",
+                      "lastName": "Nightengale",
+                      "firstName": "Florence",
+                      "healthcareProfessionalType": "LPN",
+                      "phoneNumber": "(800) 900-1234",
                       "email": "florence.nightengale@gmail.com",
-                      "profile_picture": "XfPy2KmGiZTQySSS3OHCWw=="
+                      "profilePicture": "XfPy2KmGiZTQySSS3OHCWw=="
                     },
-                    "status_timestamp": "2024-01-17T15:01:00"
+                    "statusTimestamp": "2024-01-17T15:01:00"
                   }
   ShiftRelease:
     post:
@@ -842,18 +862,18 @@ x-webhooks:
             schema:
               type: object
               required: 
-                - client_id
-                - external_shift_id
-                - shift_status
-                - status_timestamp
+                - clientId
+                - externalShiftId
+                - shiftStatus
+                - statusTimestamp
               properties:
-                client_id:
+                clientId:
                   description: Unique identifier of the client
                   type: integer
-                external_shift_id:
+                externalShiftId:
                   description: Unique identifier for the shift
                   type: integer
-                shift_status:
+                shiftStatus:
                   description: Status of the shift
                   type: string
                   enum:
@@ -861,14 +881,14 @@ x-webhooks:
                     - Completed
                     - Released
                     - Deleted
-                status_timestamp:
+                statusTimestamp:
                   description: Status timestamp in ISO 8601 format and in UTC timezone
                   type: string
                   example: "2024-01-17T15:01:00"
             example: 
                   {
-                    "client_id": 1234,
-                    "external_shift_id": 2546810,
-                    "shift_status": "Released",
-                    "status_timestamp": "2024-01-17T15:01:00"
+                    "clientId": 1234,
+                    "externalShiftId": 2546810,
+                    "shiftStatus": "Released",
+                    "statusTimestamp": "2024-01-17T15:01:00"
                   }
