@@ -585,7 +585,7 @@ paths:
   #               }  
   #       '401':
   #         $ref: "#/components/responses/UnauthorizedError"
-  /timecard:
+  /timecards:
     post:
       tags:
         - Timecard
