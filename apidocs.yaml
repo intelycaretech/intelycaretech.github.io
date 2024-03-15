@@ -205,6 +205,7 @@ paths:
                   "clientId" : 1234,
                   "attributes": {
                     "externalShiftId": 2546810,
+                    "internalShiftId": 10408640,
                     "shiftStartTime": "2024-01-16T23:00:00",
                     "shiftEndTime": "2024-01-17T07:00:00",
                     "shiftUnit": "1st Floor",
@@ -637,6 +638,7 @@ paths:
             example: 
                 {
                   "externalShiftId": 2546810,
+                  "internalShiftId": 10408640,
                   "checkIn": "2024-01-17T07:00:00",
                   "checkOut": "2024-01-17T15:00:00",
                   "breakDuration": 30
