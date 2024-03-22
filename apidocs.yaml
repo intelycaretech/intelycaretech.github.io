@@ -227,10 +227,24 @@ paths:
                 foo:
                   value:
                     {
-                      "message":"Client ID is not valid"
+                      "message":"Invalid input- Shift end time must be later than the shift start time."
                     }
         '401':
           $ref: "#/components/responses/UnauthorizedError"
+        '422':
+          description: |-
+            422 Unprocessable Entity
+          headers:
+            IC-CorrelationID:
+              $ref: "#/components/schemas/IC-CorrelationID"
+          content:
+            application/json: 
+              examples:
+                foo:
+                  value:
+                    {
+                      "message":"Invalid input- shiftEndTime must be a date in the present or in the future."
+                    }
   /shifts/{shiftId}:
     # put:
     #   tags:
