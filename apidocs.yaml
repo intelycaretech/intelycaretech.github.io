@@ -110,7 +110,7 @@ security:
   - ApiKeyAuth: []     # use the same name as under securitySchemes
   - HMACSignature: []
 paths:
-  /shifts:
+  /api/shifts:
     post:
       tags: 
         -  Shift
@@ -245,7 +245,7 @@ paths:
                     {
                       "message":"Invalid input- shiftEndTime must be a date in the present or in the future."
                     }
-  /shifts/{shiftId}:
+  /api/shifts/{shiftId}:
     # put:
     #   tags:
     #     - Shift
@@ -592,7 +592,7 @@ paths:
   #               }  
   #       '401':
   #         $ref: "#/components/responses/UnauthorizedError"
-  /timecards:
+  /api/timecards:
     post:
       tags:
         - Timecard
