@@ -161,7 +161,7 @@ paths:
                   description: Facility unit where the care should be delivered by the healthcare professional
                   type: string
                 healthcareProfessionalType:
-                  description: Healthcare professional qualification needed for the given shift
+                  description: "Healthcare professional qualification needed for the given shift. For example: “CNA”,”LPN”,”RN”."
                   type: string
                 shiftSource:
                   description: Shift origination point 
@@ -299,7 +299,7 @@ paths:
                   description: Facility unit where the care should be delivered by the healthcare professional
                   type: string
                 healthcareProfessionalType:
-                  description: Healthcare professional qualification needed for the given shift
+                  description: "Healthcare professional qualification needed for the given shift. For example: “CNA”,”LPN”,”RN”."
                   type: string
                 shiftSource:
                   description: Shift origination point
