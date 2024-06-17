@@ -145,24 +145,23 @@ paths:
                 - shiftUnit
                 - healthcareProfessionalType
                 - shiftSource
-                - timezone
               properties:
                 externalShiftId:
                   description: Unique identifier for the shift
                   type: string
                 shiftStartTime:
-                  description: Shift start date/time in ISO 8601 format and in UTC timezone
+                  description: Shift start date/time can be in the UTC timezone in ISO 8601 format ex. "2024-01-24T05:04:34Z" OR Local Time by omitting the "Z" at the end. ex. "2024-01-24T05:04:34". The local time will be based on the configuration of the facility in the IntelyCare system.
                   type: string
-                  example: "2024-01-24T05:04:34Z"
+                  example: "UTC: 2024-01-24T05:04:34Z, local time: 2024-01-24T05:04:34"
                 shiftEndTime:
-                  description: Shift end date/time in ISO 8601 format and in UTC timezone
+                  description: Shift end date/time can be in the UTC timezone in ISO 8601 format ex. "2024-01-24T05:04:34Z" OR Local Time by omitting the "Z" at the end. ex. "2024-01-24T05:04:34". The local time will be based on the configuration of the facility in the IntelyCare system.
                   type: string
-                  example: "2024-01-24T11:04:34Z"
+                  example: "UTC: 2024-01-24T05:04:34Z, local time: 2024-01-24T05:04:34"
                 shiftUnit:
                   description: Facility unit where the care should be delivered by the healthcare professional
                   type: string
                 healthcareProfessionalType:
-                  description: Healthcare professional qualification needed for the given shift
+                  description: "Healthcare professional qualification needed for the given shift. For example: “CNA”,”LPN”,”RN”."
                   type: string
                 shiftSource:
                   description: Shift origination point 
@@ -246,121 +245,128 @@ paths:
                       "message":"Invalid input- shiftEndTime must be a date in the present or in the future."
                     }
   /api/shifts/{shiftId}:
-    # put:
-    #   tags:
-    #     - Shift
-    #   operationId: shift_update_api_v1
-    #   summary: Update
-    #   security: 
-    #     - ApiKeyAuth: []
-    #   parameters:
-    #     - name: X-API-KEY
-    #       in: header
-    #       description: API key issued to a specific client. This can only be used to access data within the client scope.
-    #       example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
-    #       required: true
-    #       schema:
-    #         type: string
-    #     - name: X-CLIENT-ID
-    #       in: header
-    #       description: Intelycare's Unique identifier of the client.
-    #       example: "1234"
-    #       required: true
-    #       schema:
-    #         type: string
-    #     - name: shiftId
-    #       in: path
-    #       description: Intelycare's Unique identifier of the shift.
-    #       example: "10174202"
-    #       required: true
-    #       schema:
-    #         type: string
-    #   requestBody:
-    #     content: 
-    #       application/json:
-    #         schema:
-    #           type: object
-    #           properties:
-    #             shiftStartTime:
-    #               description: Shift start date/time in ISO 8601 format and in UTC timezone
-    #               type: string
-    #               example: "2024-01-24T05:04:34Z"
-    #             shiftEndTime:
-    #               description: Shift end date/time in ISO 8601 format and in UTC timezone
-    #               type: string
-    #               example: "2024-01-24T11:04:34Z"
-    #             shiftUnit:
-    #               description: Facility unit where the care should be delivered by the healthcare professional
-    #               type: string
-    #             healthcareProfessionalType:
-    #               description: Healthcare professional qualification needed for the given shift
-    #               type: string
-    #             shiftSource:
-    #               description: Shift origination point 
-    #               type: string
-    #             shiftBoostPercentage:
-    #               description: Percentage amount for boosting the shift
-    #               type: integer
-    #               default: 0
-    #             timezone:
-    #               description: Timezone for the shifts
-    #               type: string
-    #         example: 
-    #             {
-    #               "shiftStartTime": "2024-01-16T23:00:00",
-    #               "shiftEndTime": "2024-01-17T07:00:00",
-    #               "shiftUnit": "1st Floor",
-    #               "healthcareProfessionalType": "LPN",
-    #               "shiftSource": "qwerty",
-    #               "shiftBoostPercentage": 10,
-    #               "timezone": "ET"
-    #             }
-    #         x-codeSamples:
-    #           - lang: 'cURL'
-    #             label: 'CLI'
-    #             source: |
-    #               curl --request POST \
-    #               --url 'https://data.apiexample.com/api/example/batch_query/json?format=json' \
-    #               --header 'content-type: application/octet-stream: ' \
-    #               --data '{}'
-    #   responses:
-    #     '200':
-    #       description: |-
-    #         200 OK
-    #       content:
-    #         application/json: 
-    #           example:
-    #             {
-    #               "data": {
-    #                 "clientId" : 1234,
-    #                 "internalShiftId": 10174202,
-    #                 "externalShiftId": "2546810",
-    #                 "shiftStartTime": "2024-01-16T23:00:00",
-    #                 "shiftEndTime": "2024-01-17T07:00:00",
-    #                 "shiftDate": "2024-01-16",
-    #                 "shiftUnit": "1st Floor",
-    #                 "healthcareProfessionalType": "LPN",
-    #                 "shiftSource": "qwerty",
-    #                 "shiftBoostPercentage": 10,
-    #                 "timezone": "ET"
-    #               }
-    #             }
-    #     '400':
-    #       description: |-
-    #         400 Bad Request
-    #       headers:
-    #         IC-CorrelationID:
-    #           $ref: "#/components/schemas/IC-CorrelationID"
-    #       content:
-    #         application/json: 
-    #           examples:
-    #             foo:
-    #               value:
-    #                 {
-    #                   "message":"Shift ID is not valid!"
-    #                 }
-    #     '401':
-    #       $ref: "#/components/responses/UnauthorizedError"
+    put:
+      tags:
+        - Shift
+      operationId: shift_update_api_v1
+      summary: Update
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: X-API-KEY
+          in: header
+          description: API key issued to a specific client. This can only be used to access data within the client scope.
+          example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
+          required: true
+          schema:
+            type: string
+        - name: X-CLIENT-ID
+          in: header
+          description: Intelycare's Unique identifier of the client.
+          example: "1234"
+          required: true
+          schema:
+            type: string
+        - name: shiftId
+          in: path
+          description: Intelycare's Unique identifier of the shift.
+          example: "10174202"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - externalShiftId
+                - shiftStartTime
+                - shiftEndTime
+                - shiftUnit
+                - healthcareProfessionalType
+                - shiftSource
+              properties:
+                shiftStartTime:
+                  description: Shift start date/time can be in the UTC timezone in ISO 8601 format ex. "2024-01-24T05:04:34Z" OR Local Time by omitting the "Z" at the end. ex. "2024-01-24T05:04:34". The local time will be based on the configuration of the facility in the IntelyCare system.
+                  type: string
+                  example: "UTC: 2024-01-24T05:04:34Z, local time: 2024-01-24T05:04:34"
+                shiftEndTime:
+                  description: Shift end date/time can be in the UTC timezone in ISO 8601 format ex. "2024-01-24T05:04:34Z" OR Local Time by omitting the "Z" at the end. ex. "2024-01-24T05:04:34". The local time will be based on the configuration of the facility in the IntelyCare system.
+                  type: string
+                  example: "UTC: 2024-01-24T05:04:34Z, local time: 2024-01-24T05:04:34"
+                shiftUnit:
+                  description: Facility unit where the care should be delivered by the healthcare professional
+                  type: string
+                healthcareProfessionalType:
+                  description: "Healthcare professional qualification needed for the given shift. For example: “CNA”,”LPN”,”RN”."
+                  type: string
+                shiftSource:
+                  description: Shift origination point
+                  type: string
+                shiftBoostPercentage:
+                  description: Percentage amount for boosting the shift
+                  type: integer
+                  default: 0
+                timezone:
+                  description: Timezone for the shifts
+                  type: string
+            example:
+                {
+                  "shiftStartTime": "2024-01-16T23:00:00",
+                  "shiftEndTime": "2024-01-17T07:00:00",
+                  "shiftUnit": "1st Floor",
+                  "healthcareProfessionalType": "LPN",
+                  "shiftSource": "qwerty",
+                  "shiftBoostPercentage": 10,
+                  "timezone": "ET"
+                }
+            x-codeSamples:
+              - lang: 'cURL'
+                label: 'CLI'
+                source: |
+                  curl --request POST \
+                  --url 'https://data.apiexample.com/api/example/batch_query/json?format=json' \
+                  --header 'content-type: application/octet-stream: ' \
+                  --data '{}'
+      responses:
+        '200':
+          description: |-
+            200 OK
+          content:
+            application/json:
+              example:
+                {
+                  "data": {
+                    "clientId" : 1234,
+                    "internalShiftId": 10174202,
+                    "externalShiftId": "2546810",
+                    "shiftStartTime": "2024-01-16T23:00:00",
+                    "shiftEndTime": "2024-01-17T07:00:00",
+                    "shiftDate": "2024-01-16",
+                    "shiftUnit": "1st Floor",
+                    "healthcareProfessionalType": "LPN",
+                    "shiftSource": "qwerty",
+                    "shiftBoostPercentage": 10,
+                    "timezone": "ET"
+                  }
+                }
+        '400':
+          description: |-
+            400 Bad Request
+          headers:
+            IC-CorrelationID:
+              $ref: "#/components/schemas/IC-CorrelationID"
+          content:
+            application/json:
+              examples:
+                foo:
+                  value:
+                    {
+                      "message":"Shift ID is not valid!"
+                    }
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
     delete:
       tags:
         - Shift
