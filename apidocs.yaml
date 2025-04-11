@@ -55,6 +55,8 @@ tags:
   #   description: Everything about Facilities
   - name: Webhook Events
     description: Real-time updates on the status of submitted shifts. The API response includes valuable information about the assigned IntelyPro, giving you insights into the workforce handling each shift.
+  - name: Check In / Check Out
+    description: Easily manage check-in and check-out events for shifts. Our API allows you to programmatically submit and manage check-in and check-out events, providing you with the flexibility to adapt to your workforce scheduling needs.
 x-tagGroups:
   - name: APIs
     tags:
@@ -64,6 +66,7 @@ x-tagGroups:
       - Timecard
       # - Facility
       - Webhook Events
+      - Check In / Check Out
 components:
   securitySchemes: # Security
     ApiKeyAuth:
@@ -742,6 +745,118 @@ paths:
                   "breakDuration": 30,
                   "errors": null,
                   "updatedAt": "2024-01-17T15:01:00"
+                }
+        '401':
+          $ref: "#/components/responses/UnauthorizedError"
+  /api/clockinout/{platform_type}:
+    post:
+      tags:
+        - Check In / Check Out
+      operationId: check_in_out_api_v1
+      summary: Check-in / Check-out
+      security: 
+        - ApiKeyAuth: []
+      parameters:
+        - name: X-API-KEY
+          in: header
+          description: API key issued to a specific client. This can only be used to access data within the client scope.
+          example: d1015a83-9f5f-4a4d-b5fd-4e756ed1d282
+          required: true
+          schema:
+            type: string
+        - name: X-CLIENT-ID
+          in: header
+          description: Intelycare's Unique identifier of the client.
+          example: "1234"
+          required: true
+          schema:
+            type: string
+        - name: platform_type
+          in: path
+          description: Intelycare's Unique identifier of the platform using this API.
+          example: "intelycare"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              type: object
+              required: 
+                - nurseId
+                - clockTime
+                - shiftId
+                - facilityId
+                - event
+              properties:
+                nurseId:
+                  description: Unique identifier for the caregiver
+                  type: integer
+                  example: 67798
+                clockTime:
+                  description: Shift check-in or check-out timestamp in ISO 8601 format and in UTC timezone
+                  type: string
+                  example: "2024-02-23T07:34:00.000Z"
+                shiftId:
+                  description: Unique identifier for the shift
+                  type: integer
+                  example: 98847575
+                facilityId:
+                  description: Unique identifier for the client
+                  type: integer
+                  example: 77666555
+                event:
+                  description: The type of event to be processed
+                  type: string
+                  enum:
+                    - CLOCK_OUT
+                    - CLOCK_IN
+            example: 
+                {
+                  "nurseId":"67798",
+                  "clockTime":"2024-02-23T07:34:00.000Z",
+                  "shiftId":"98847575",
+                  "facilityId":"77666555",
+                  "event":"CLOCK_IN"
+                }
+      responses:
+        '200':
+          description: |-
+            200 OK
+          content:
+            application/json: 
+              example: 
+                {
+                  "nurseId":"67798",
+                  "clockTime":"2024-02-23T07:34:00.000Z",
+                  "shiftId":"98847575",
+                  "facilityId":"77666555",
+                  "event":"CLOCK_IN",
+                  "additionalProperties": {
+                    "CLOCK_IN" : {
+                      "shiftId" : 98847575,
+                      "message" : "Thanks for Checking in.",
+                      "providerId" : 67798,
+                      "discipline" : null,
+                      "dateCreated" : "2024-02-23T07:34:00.000Z",
+                      "clientId" : 77666555,
+                      "checkIn" : null,
+                      "checkOut" : null,
+                      "isSuccess" : null
+                    },
+                    "CLOCK_OUT" : {
+                      "shiftId" : 98847575,
+                      "message" : "Thanks for Checking out.",
+                      "providerId" : 67798,
+                      "discipline" : null,
+                      "dateCreated" : "2024-02-23T07:34:00.000Z",
+                      "clientId" : 1077,
+                      "checkIn" : "2024-02-23T07:34:00.000Z",
+                      "checkOut" : null,
+                      "isSuccess" : null
+                    }
+                  }
                 }
         '401':
           $ref: "#/components/responses/UnauthorizedError"
